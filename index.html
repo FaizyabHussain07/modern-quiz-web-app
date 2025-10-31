@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Web & App</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Custom style -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="intro-screen">
+    <div class="brand-card card">
+      <h1 style="margin-bottom:8px">Quiz Portal</h1>
+      <p style="color:var(--muted)">A clean, responsive quiz interface. Enter details and start the quiz.</p>
+      <div style="margin-top:18px">
+        <div class="quiz-stats">
+          <div class="stat-item">
+            <i class="ri-questionnaire-line"></i>
+            <span>Questions: <strong id="brand-ttl">15</strong></span>
+          </div>
+          <div class="stat-item">
+            <i class="ri-time-line"></i>
+            <span>Time/Q: <strong>10s</strong></span>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4">
+        <button class="btn primary" onclick="showForm()">
+          <i class="ri-arrow-right-line"></i> Get Started
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="display:none">
+    <section class="formwrapper card">
+      <div class="card-header">
+        <i class="ri-user-3-line"></i>
+        <h2>Student Details</h2>
+      </div>
+      <div class="input-group">
+        <label for="inp_name">Name</label>
+        <input type="text" id="inp_name" placeholder="Type your name" aria-label="Name">
+
+        <label for="inp_email">Email</label>
+        <input type="email" id="inp_email" placeholder="Type your email" aria-label="Email">
+
+        <label for="inp_roll">Roll Number</label>
+        <input type="text" id="inp_roll" placeholder="Type your roll number" aria-label="Roll Number">
+
+        <label for="inp-inst">Institute</label>
+        <input type="text" id="inp-inst" placeholder="Type your Institute name!" aria-label="Institute">
+      </div>
+      <div class="button-group">
+        <button class="btn primary" onclick="startQuiz()">
+          <i class="ri-arrow-right-circle-line"></i> Submit
+        </button>
+        <button class="btn secondary"
+          onclick="fillDemoData()">
+          <i class="ri-speed-line"></i> Fill Demo
+        </button>
+      </div>
+    </section>
+
+    <!-- section 2: welcome screen -->
+    <section class="start card" id="start-screen" style="display:none">
+      <div class="welcome-header">
+        <i class="ri-award-line"></i>
+        <h2>Welcome to the Quiz</h2>
+      </div>
+
+      <div class="welcome-content">
+        <div class="user-preview">
+          <div class="user-avatar">
+            <i class="ri-user-smile-line"></i>
+          </div>
+          <div class="user-info">
+            <h3 id="para-name"></h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <i class="ri-mail-line"></i>
+                <span id="para-email"></span>
+              </div>
+              <div class="info-item">
+                <i class="ri-number-3"></i>
+                <span id="para-roll"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quiz-settings">
+          <h4><i class="ri-settings-4-line"></i> Quiz Settings</h4>
+          <div class="settings-grid">
+            <div class="setting-item">
+              <label for="time-select">Time per Question</label>
+              <select id="time-select" class="form-select">
+                <option value="10" selected>10 seconds</option>
+                <option value="15">15 seconds</option>
+                <option value="20">20 seconds</option>
+                <option value="30">30 seconds</option>
+              </select>
+            </div>
+            <div class="setting-item">
+              <label>Total Questions</label>
+              <div class="setting-value"><i class="ri-questionnaire-line"></i> 15 Questions</div>
+            </div>
+            <div class="setting-item">
+              <label>Passing Score</label>
+              <div class="setting-value"><i class="ri-percent-line"></i> 60%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="welcome-footer">
+        <button class="btn primary" onclick="beginQuiz()">
+          <i class="ri-play-circle-line"></i>
+          Start Quiz
+        </button>
+      </div>
+    </section>
+    <!-- Quiz area -->
+    <section class="quizbody card" style="display:none">
+      <div class="quiz-header d-flex justify-content-between align-items-start">
+        <div>
+          <h2>Q <span class="numb">1</span> :</h2>
+          <p id="ques" class="mb-0 mt-2"></p>
+        </div>
+        <div class="text-end">
+          <div class="mb-2 d-flex align-items-center"><i class="fa fa-clock me-2"></i> <span id="timer"
+              class="badge bg-secondary">00:00</span> <span id="timer-ring" class="circular-mini"
+              aria-hidden="true"></span></div>
+          <div class="mb-2"><i class="fa fa-list-ol"></i> <small class="text-info">Progress</small></div>
+        </div>
+      </div>
+      <ul id="opt" class="mt-3">
+        <li class="p-3"></li>
+        <li class="p-3"></li>
+        <li class="p-3"></li>
+        <li class="p-3"></li>
+      </ul>
+
+      <div class="d-flex justify-content-end mt-3">
+        <button class="btn" onclick="nextQuestion()" id="nextBtn" style="display:none">Next</button>
+      </div>
+    </section>
+
+    <!-- section 4 : results  -->
+
+
+    <section class="result analytics-dashboard" style="display:none">
+      <div class="dashboard-header">
+        <div class="header-content">
+          <h2><i class="ri-pie-chart-2-line"></i> Quiz Analytics</h2>
+          <p class="define result-message"></p>
+        </div>
+        <div class="circular-progress-container">
+          <div class="circular-progress">
+            <span class="progress-value">0%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-row">
+        <!-- Left Column: Performance Overview -->
+        <div class="dashboard-col performance-col">
+          <!-- Performance Metrics -->
+          <div class="dashboard-card performance">
+            <h3><i class="ri-bar-chart-box-line"></i> Performance Overview</h3>
+            <div class="stat-grid">
+              <div class="stat-box highlight" id="stat-score">
+                <i class="ri-percent-line"></i>
+                <span class="stat-label">Overall Score</span>
+                <span class="stat-value accent">0%</span>
+              </div>
+              <div class="stat-box" id="stat-questions">
+                <i class="ri-list-check-2"></i>
+                <span class="stat-label">Total Questions</span>
+                <span class="stat-value">0</span>
+              </div>
+              <div class="stat-box" id="stat-correct">
+                <i class="ri-check-double-line"></i>
+                <span class="stat-label">Correct Answers</span>
+                <span class="stat-value success">0</span>
+              </div>
+              <div class="stat-box" id="stat-wrong">
+                <i class="ri-close-circle-line"></i>
+                <span class="stat-label">Wrong Answers</span>
+                <span class="stat-value danger">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Student Info and Time Analysis -->
+        <div class="dashboard-col info-col">
+          <div class="dashboard-card student-info">
+            <h3><i class="ri-user-3-line"></i> Student Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <i class="ri-user-3-line"></i>
+                <div class="info-content">
+                  <span class="info-label">Name</span>
+                  <span class="info-value" id="info-name">-</span>
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="ri-mail-line"></i>
+                <div class="info-content">
+                  <span class="info-label">Email</span>
+                  <span class="info-value" id="info-email">-</span>
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="ri-number-3"></i>
+                <div class="info-content">
+                  <span class="info-label">Roll Number</span>
+                  <span class="info-value" id="info-roll">-</span>
+                </div>
+              </div>
+              <div class="info-item">
+                <i class="ri-building-2-line"></i>
+                <div class="info-content">
+                  <span class="info-label">Institute</span>
+                  <span class="info-value" id="info-inst">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Time Analysis -->
+          <div class="dashboard-card time-analysis">
+            <h3><i class="ri-time-line"></i> Time Analysis</h3>
+            <div class="analytics-grid">
+              <div class="analytic-box">
+                <i class="ri-timer-flash-line"></i>
+                <div class="analytic-info">
+                  <span class="analytic-label">Total Quiz Time</span>
+                  <span class="analytic-value" id="time-spent">-</span>
+                </div>
+              </div>
+              <div class="analytic-box">
+                <i class="ri-time-line"></i>
+                <div class="analytic-info">
+                  <span class="analytic-label">Quiz Completed At</span>
+                  <span class="analytic-value" id="finished-at">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-footer">
+        <button class="btn primary" onclick="restartQuiz()">
+          <i class="ri-restart-line"></i> Take Quiz Again
+        </button>
+        <button class="btn secondary" onclick="location.reload()">
+          <i class="ri-home-line"></i> Back to Home
+        </button>
+      </div>
+    </section>
+
+
+
+
+</body>
+
+
+
+<script src="app.js"></script>
+
+</html>
